@@ -1,0 +1,23 @@
+// main.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>               // for usleep
+#include "palette_test.h"         // :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
+#include "text_mode_vga_color.h"  // :contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3}
+
+// Entry point
+int main()
+{
+    // Optional: seed the random generator so colors vary each run
+    srand((unsigned)time(NULL));
+
+    // 1) Run the palette cycling demo
+    paletteTest();
+
+    // 2) Then drop into the endless color‐text screen saver
+    textVGAColorScreenSaver();
+
+    // (We never reach here, but return 0 for completeness)
+    return 0;
+}

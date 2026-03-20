@@ -1,0 +1,312 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/simulation/modelsim
+vadds_subs_9bit
+Z1 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
+Z2 !s110 1742380119
+!i10b 1
+!s100 z_z27j?L^6TRb3zHCY49Q2
+IGXLgmj]`[47HCkK?k>[7T2
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+Z4 !s105 ripple_adder_sv_unit
+S1
+R0
+Z5 w1742379454
+Z6 8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/ripple_adder.sv
+Z7 FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/ripple_adder.sv
+L0 1
+Z8 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z9 !s108 1742380119.000000
+Z10 !s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/ripple_adder.sv|
+Z11 !s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/ripple_adder.sv|
+!i113 1
+Z12 o-sv -work work
+Z13 !s92 -sv -work work {+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier}
+Z14 tCvgOpt 0
+vcontrol
+R1
+!s110 1742380118
+!i10b 1
+!s100 Md^fO2D:CHa;7am34AWb43
+I;8f>>M?DDh1gm5<HB1cE[2
+R3
+!s105 control_sv_unit
+S1
+R0
+w1742379908
+8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/control.sv
+FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/control.sv
+L0 3
+R8
+r1
+!s85 0
+31
+Z15 !s108 1742380118.000000
+!s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/control.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/control.sv|
+!i113 1
+R12
+R13
+R14
+vD_FF
+R1
+R2
+!i10b 1
+!s100 <^fj1Edha9Mzb0ca?U?3h2
+I1E:lAfLHSzfP`aPnSYPAk0
+R3
+Z16 !s105 register_sv_unit
+S1
+R0
+Z17 w1742379431
+Z18 8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/register.sv
+Z19 FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/register.sv
+L0 22
+R8
+r1
+!s85 0
+31
+R9
+Z20 !s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/register.sv|
+Z21 !s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/register.sv|
+!i113 1
+R12
+R13
+R14
+n@d_@f@f
+vfull_adder
+R1
+R2
+!i10b 1
+!s100 hi;WS?NjTg3<FZPlKO7Ga0
+IVmN5fz@OGG_RVMA4;Vi<Z3
+R3
+R4
+S1
+R0
+R5
+R6
+R7
+L0 34
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+R14
+vfull_adder_four_bit
+R1
+R2
+!i10b 1
+!s100 8AXQnFk:cS?j93Y`b0cR=0
+IgUho4Ok`14ZkL?MkJ8;MN2
+R3
+R4
+S1
+R0
+R5
+R6
+R7
+L0 45
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+R14
+vHexDriver
+R1
+R2
+!i10b 1
+!s100 ^DddjRd7Wla]U<SlP;mT@0
+IU`>C<P6[`Cii^B>7]EX7[1
+R3
+!s105 HexDriver_sv_unit
+S1
+R0
+w1742379409
+8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/HexDriver.sv
+FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/HexDriver.sv
+L0 1
+R8
+r1
+!s85 0
+31
+R15
+!s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/HexDriver.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/HexDriver.sv|
+!i113 1
+R12
+R13
+R14
+n@hex@driver
+vlab5_toplevel
+R1
+R2
+!i10b 1
+!s100 =:L7^<mdX6O6dOX1oVcl30
+IWdOH97a@K^39;>I7`i=Ua1
+R3
+!s105 lab5_toplevel_sv_unit
+S1
+R0
+w1742379424
+8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/lab5_toplevel.sv
+FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/lab5_toplevel.sv
+L0 8
+R8
+r1
+!s85 0
+31
+R9
+!s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/lab5_toplevel.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/lab5_toplevel.sv|
+!i113 1
+R12
+R13
+R14
+vreg_8
+R1
+R2
+!i10b 1
+!s100 ^7LUeKM^CA`I_LQHM:Bhd1
+ILEI@[M6GOJ2>PS_PBA?BD0
+R3
+R16
+S1
+R0
+R17
+R18
+R19
+L0 1
+R8
+r1
+!s85 0
+31
+R9
+R20
+R21
+!i113 1
+R12
+R13
+R14
+vsync
+R1
+R2
+!i10b 1
+!s100 2W5Vz0:F6ckE2`eJOTK5l1
+IPWT1;c5ZEZMHeQ^jmHjaP2
+R3
+Z22 !s105 Synchronizers_sv_unit
+S1
+R0
+Z23 w1742379438
+Z24 8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/Synchronizers.sv
+Z25 FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/Synchronizers.sv
+L0 4
+R8
+r1
+!s85 0
+31
+R9
+Z26 !s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/Synchronizers.sv|
+Z27 !s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/Synchronizers.sv|
+!i113 1
+R12
+R13
+R14
+vsync_r0
+R1
+R2
+!i10b 1
+!s100 IGd9f_F;JNjVBLQ@DAnD10
+IB0910?C[2Wke]NHBR=V]g2
+R3
+R22
+S1
+R0
+R23
+R24
+R25
+L0 18
+R8
+r1
+!s85 0
+31
+R9
+R26
+R27
+!i113 1
+R12
+R13
+R14
+vsync_r1
+R1
+R2
+!i10b 1
+!s100 1CXiH1DYDbAUS69Ee2j060
+I_9Di0DUVPVM>`2ig_m_D:2
+R3
+R22
+S1
+R0
+R23
+R24
+R25
+L0 39
+R8
+r1
+!s85 0
+31
+R9
+R26
+R27
+!i113 1
+R12
+R13
+R14
+vtestbench
+R1
+R2
+!i10b 1
+!s100 O>i82cPR?IGdihoEjD[L:0
+IO3?m9XKb4<1fan06QoMPG0
+R3
+!s105 testbench_sv_unit
+S1
+R0
+w1742379417
+8C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/testbench.sv
+FC:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/testbench.sv
+L0 1
+R8
+r1
+!s85 0
+31
+R9
+!s107 C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/testbench.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier|C:/Users/artha/OneDrive/Documents/Lecture/Year 2025 Spring Semester/ECE 385/Lab/8-bit_Multiplier/testbench.sv|
+!i113 1
+R12
+R13
+R14

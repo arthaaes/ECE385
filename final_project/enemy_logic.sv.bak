@@ -1,0 +1,89 @@
+// enemy_controller.sv
+//
+// Responsible for controlling the behaviour of the enemy array
+
+module enemy_logic
+(
+	input logic 			frame_tick,
+	input logic				rst_game,
+	output logic [7:0] 	enemy_anim_frame,	// Selects which enemy animation to use
+	output logic [9:0]	enemy_pos_y,		// X offset of the enemy array
+	output logic [9:0] 	frog_y_offset,
+	output logic [9:0] 	jelly_y_offset,
+	output logic [9:0] 	other_y_offset,
+	output logic [9:0] 	enemy_offset_y       // Y offset of the entire enemy array
+);
+
+   // ─────────────────────────────────────────────
+   // shift whole array left by one alien width
+   localparam logic [9:0] ALIEN_WIDTH_PX = 10'd16;  // set to the sprite width
+   // ─────────────────────────────────────────────
+
+
+
+// Internal variables
+logic [7:0] counter;
+logic count_up_offset;
+logic [11:0] subpixel_offset;	    // subpixel X offset for smooth horizontal movement
+logic [7:0]  frame_counter;         // controls vertical movement timing
+logic [9:0]  enemy_y_position;      // internal Y position register
+
+
+always_ff @ (posedge frame_tick or posedge rst_game) begin
+	if(rst_game) begin
+		count_up_offset   <= 1'b1;
+		subpixel_offset   <= 12'd0;
+		counter           <= 8'd0;
+		frame_counter     <= 7'd0;
+		enemy_y_position  <= 10'd32; // Start at Y = 32
+	end
+	else begin
+		// Update animation counter
+		counter <= counter + 8'd1;
+		if(counter >= 8'd120)
+			counter <= 8'd0;
+
+		// Horizontal movement logic
+		if(count_up_offset)
+			subpixel_offset <= subpixel_offset + 12'h001;
+		else
+			subpixel_offset <= subpixel_offset - 12'h001;
+
+		if(subpixel_offset[11:2] >= 10'd16) begin
+         // force the whole register back down so [11:2] == 16
+         subpixel_offset <= {10'd16, subpixel_offset[1:0]};
+			count_up_offset <= 1'b0;
+		end
+		else if(subpixel_offset[11:2] == 10'd0) begin
+			count_up_offset <= 1'b1;
+		end
+
+		// Vertical movement every ~?? second (assuming 60Hz vsync)
+		if (frame_counter == 8'd89) begin
+			enemy_y_position <= enemy_y_position + 10'd8; // move down by 8 pixels
+			frame_counter <= 8'd0;
+		end
+		else begin
+			frame_counter <= frame_counter + 8'd1;
+		end
+	end
+end
+
+// Outputs
+ assign enemy_pos_y = subpixel_offset[11:2];
+assign enemy_offset_y  = enemy_y_position;
+
+// Optional individual row offsets (if used elsewhere)
+assign frog_y_offset   = enemy_y_position;
+assign jelly_y_offset  = enemy_y_position + 10'd32;
+assign other_y_offset  = enemy_y_position + 10'd64;
+
+// Animation control
+always_comb begin
+	if(counter < 8'd50)
+		enemy_anim_frame = 8'd8;
+	else
+		enemy_anim_frame = 8'd0;
+end
+
+endmodule

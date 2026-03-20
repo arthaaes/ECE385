@@ -1,0 +1,98 @@
+// score_tracker.sv
+// Full module with synchronized one-shot collision and weighted scoring
+// Top row +3, middle +2, bottom +1
+
+module score_tracker
+(
+    input  logic        frame_tick,            // frame clock
+    input  logic        rst_game,            // synchronous reset
+    input  logic [5:0]  X,                // pixel X coordinate
+    input  logic [3:0]  Y,                // pixel Y coordinate
+    input  logic        enemy_collision_flags,  // raw collision pulse (async)
+    input  logic [2:0]  enemy_row,        // row index 0=top,1=middle,2=bottom
+	 input  logic        mystery_hit,
+    output logic        score_pixel_data             // VGA score_pixel_data output
+);
+
+    //----- score digits -----
+    logic [3:0] score_hundreds;
+    logic [3:0] score_tens;
+    logic [3:0] score_ones;
+
+    //----- collision synchronizer & edge detect -----
+    logic col_sync_0, col_sync_1;
+    logic col_edge;
+
+    always_ff @(posedge frame_tick or posedge rst_game) begin
+        if (rst_game) begin
+            col_sync_0 <= 1'b0;
+            col_sync_1 <= 1'b0;
+            col_edge   <= 1'b0;
+        end else begin
+            col_sync_0 <= enemy_collision_flags;
+            col_sync_1 <= col_sync_0;
+            // detect rising edge: true for one vsync cycle
+            col_edge   <=  col_sync_0 & ~col_sync_1;
+        end
+    end
+
+    //----- intermediate arithmetic -----
+    logic [3:0] delta;
+    logic [4:0] sum_ones;
+    logic [4:0] sum_tens;
+    logic [4:0] sum_hundreds;
+
+    //----- number ROM interface -----
+    logic [7:0] number_slice;
+    logic [7:0] number_address;
+
+    digit_rom rom_instance(
+        .address(number_address),
+        .data(number_slice)
+    );
+
+    assign score_pixel_data = number_slice[3'b111 - X[2:0]];
+
+    //----- scoring logic -----
+    always_ff @(posedge frame_tick or posedge rst_game) begin
+        if (rst_game) begin
+            score_hundreds <= 4'd0;
+            score_tens     <= 4'd0;
+            score_ones     <= 4'd0;
+        end else if (col_edge || mystery_hit) begin
+            // assign point value based on row
+            if (mystery_hit)
+              delta = 4'd10;                       // +10 for mystery
+            else
+              delta = (enemy_row == 3'd0) ? 4'd3 :  // +3 top row
+                      (enemy_row == 3'd1) ? 4'd2 :  // +2 middle
+                      (enemy_row == 3'd2) ? 4'd1 :  // +1 bottom
+                      4'd0;
+
+            // compute sums and carry
+            sum_ones     = score_ones     + delta;
+            sum_tens     = score_tens     + (sum_ones >= 5'd10 ? 5'd1 : 5'd0);
+            sum_hundreds = score_hundreds + (sum_tens >= 5'd10 ? 5'd1 : 5'd0);
+
+            // wrap digits at 10
+            score_ones     <= sum_ones[3:0]     - (sum_ones >= 5'd10 ? 4'd10 : 4'd0);
+            score_tens     <= sum_tens[3:0]     - (sum_tens >= 5'd10 ? 4'd10 : 4'd0);
+            score_hundreds <= (sum_hundreds >= 5'd10) ? 4'd0 : sum_hundreds[3:0];
+        end
+    end
+
+    //----- display digit selection -----
+    always_comb begin
+        if (X < 6'd8) begin
+            // hundreds digit
+            number_address = {score_hundreds, 4'b0} + Y;
+        end else if (X < 6'd16) begin
+            // tens digit
+            number_address = {score_tens,     4'b0} + Y;
+        end else begin
+            // ones digit
+            number_address = {score_ones,     4'b0} + Y;
+        end
+    end
+
+endmodule

@@ -1,0 +1,45 @@
+//game_fsm.sv
+//
+// finite state machine (FSM) for the game.
+// controls the current game state: start screen, gameplay, win, or lose.
+
+
+module game_fsm
+(
+	input logic 			frame_tick,
+	input logic [29:0] 	enemy_flags,
+	input logic [2:0]		life_count,
+	input logic [7:0] 	kbd_code,
+	input logic 			rst_game,
+	input logic [9:0]		enemy_offset_y,       //vertical position of enemies
+	input logic [5:0]    remaining_enemies,
+	output logic [3:0]	curr_state
+);
+
+	// Set the threshold where player is considered reached by enemy (e.g., Y = 416)
+	localparam PLAYER_Y_THRESHOLD = 10'd416;
+
+	always_ff @ (posedge frame_tick or posedge rst_game) begin
+		if(rst_game) begin
+			curr_state <= 4'b0;  // Press Space curr_state
+		end
+		else begin
+			if(curr_state == 4'b0 && kbd_code == 8'd44)
+				curr_state <= 4'd1;  // Gameplay
+
+			else if (curr_state == 4'd1 && remaining_enemies == 6'd0)
+
+				curr_state <= 4'd2;  // You Win
+
+			else if(curr_state == 4'd1 && life_count == 3'd0)
+				curr_state <= 4'd3;  // Game Over
+
+			else if(curr_state == 4'd1 && enemy_offset_y + 10'd96 >= PLAYER_Y_THRESHOLD)
+				curr_state <= 4'd3;  // Game Over if bottom row of enemies reaches the player
+
+			else
+				curr_state <= curr_state;  // Hold current state
+		end
+	end
+
+endmodule

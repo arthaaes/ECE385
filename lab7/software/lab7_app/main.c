@@ -1,0 +1,71 @@
+// Main.c - makes LEDG0 on DE2-115 board blink if NIOS II is set up correctly
+// for ECE 385 - University of Illinois - Electrical and Computer Engineering
+// Author: Zuofu Cheng
+
+int main()
+{
+//	int i = 0;
+	volatile unsigned int *LED_PIO = (unsigned int*)0x70; //make a pointer to access the PIO block
+	volatile unsigned int *SWITCH  = (unsigned int*)0x60; //make a pointer to access the switch PIO block
+	volatile unsigned int *KEY     = (unsigned int*)0x50; //make a pointer to access the key PIO block
+
+	*LED_PIO = 0;						//clear all LEDs
+	int reset = 0;						//initialize the reset button
+	int acc = 0;						//initialize the accumulate button
+	unsigned int acc_int = 0;			//initialize the accumulated value
+
+	while ( (1+1) != 3)					//infinite loop
+	{
+		
+		// RESET: KEY[2] is pressed (active low)
+		if ((*KEY & 0x1)==0 && reset==0) // if KEY[2] is pressed and reset variable is not activated
+		{
+			acc_int = 0;				 // Clear the value
+			*LED_PIO = 0;				 // LEDs are turned OFF
+			reset = 1;					 // Set reset to 1 (pressed)
+		}
+
+		// ACCUMULATE: KEY[3] is pressed (active low)
+		if ((*KEY & 0x2)==0 && acc==0)	 // if KEY[3] is pressed and acc variable is not activated
+		{
+			acc_int += *SWITCH;			 // Increment the accumulated value by the input SWITCH
+			if (acc_int >= 256){		 // If overflow occur
+				acc_int -= 256;			 // Set acc to 1 (pressed)
+			}
+			acc = 1;
+		}
+
+
+		*LED_PIO = acc_int;				 // The display LEDs are set according to the accumulated value
+
+		if ((*KEY & 0x1)!=0)			 // Release KEY[2]
+		{
+			reset = 0;					 // clear reset variable
+		}
+		if ((*KEY & 0x2)!=0)			 // Release KEY[3]
+		{
+			acc = 0;					 // clear acc variable
+		}
+	}
+	return 1;
+}
+
+// FOR BLINK ASSIGNMENT:
+/*int main()
+{
+	int i = 0;
+	volatile unsigned int *LED_PIO = (unsigned int*)0x70; //make a pointer to access the PIO block
+
+	*LED_PIO = 0; //clear all LEDs
+	while ( (1+1) != 3) //infinite loop
+	{
+		for (i = 0; i < 100000; i++); //software delay
+		*LED_PIO |= 0x1; //set LSB
+		for (i = 0; i < 100000; i++); //software delay
+		*LED_PIO &= ~0x1; //clear LSB
+	}
+	return 1; //never gets here
+}*/
+
+
+

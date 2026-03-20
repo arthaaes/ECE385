@@ -1,0 +1,63 @@
+module life_drop_controller (
+  input  logic        vsync,           // use this as clock
+  input  logic        reset,
+  input  logic        mystery_hit,     // 1 when UFO is hit
+  input  logic [9:0]  x_pos,           // drop starts at this x
+  input  logic [9:0]  ship_x,          // for collision
+  input  logic [9:0]  ship_y,
+  output logic [9:0]  life_x,
+  output logic [9:0]  life_y,
+  output logic        life_visible,
+  output logic        collected        // 1 for 1-2 frames when collected
+);
+
+  localparam SPEED = 1;
+
+  logic [9:0] drop_x, drop_y;
+  logic       falling;
+  logic [1:0] collect_counter;
+
+  // Drive outputs
+  assign life_x = drop_x;
+  assign life_y = drop_y;
+  assign life_visible = falling;
+  assign collected = (collect_counter > 0);
+
+  always_ff @(posedge vsync or posedge reset) begin
+    if (reset) begin
+      falling <= 0;
+      drop_x <= 0;
+      drop_y <= 0;
+      collect_counter <= 0;
+    end else begin
+      // Start falling if UFO was hit and drop isn't active
+      if (mystery_hit && !falling) begin
+        falling <= 1;
+        drop_x <= x_pos + 10;
+        drop_y <= 0;
+      end
+
+      // Update drop position if falling
+      if (falling) begin
+        drop_y <= drop_y + SPEED;
+
+        // Check for collision with player ship
+        if ((drop_x >= ship_x && drop_x <= ship_x + 20) &&
+            (drop_y >= ship_y && drop_y <= ship_y + 16)) begin
+          falling <= 0;
+          collect_counter <= 2; // short pulse for collected
+        end
+
+        // If drop falls off screen
+        if (drop_y >= 480) begin
+          falling <= 0;
+        end
+      end
+
+      // Countdown the pulse
+      if (collect_counter > 0) begin
+        collect_counter <= collect_counter - 1;
+      end
+    end
+  end
+endmodule

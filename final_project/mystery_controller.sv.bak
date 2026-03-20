@@ -1,0 +1,48 @@
+// mystery_controller.sv
+module mystery_controller(
+  input  logic        v_sync,
+  input  logic        reset,
+  output logic        exists,
+  output logic [9:0]  x_pos,
+  output logic [9:0]  y_pos
+);
+
+  // Parameters
+  localparam SCREEN_W  = 640;
+  localparam SPAWN_T    = 8'd119; // ~2 seconds at 60Hz; use 179 for 3s
+  localparam SPEED      = 2;      // pixels per frame
+  localparam Y_START    = 10'd16; // fixed vertical
+
+  // Internals
+  logic [7:0] spawn_timer;
+  logic       dir; // 0=→, 1=←
+
+  always_ff @(posedge v_sync or posedge reset) begin
+    if (reset) begin
+      spawn_timer <= 0;
+      exists      <= 0;
+      dir         <= 0;
+      x_pos       <= 0;
+    end else begin
+      if (!exists) begin
+        // count until spawn
+        if (spawn_timer < SPAWN_T)
+          spawn_timer <= spawn_timer + 1;
+        else begin
+          spawn_timer <= 0;
+          exists      <= 1;
+          dir         <= ~dir;
+          x_pos       <= dir ? SCREEN_W - 32 : 0;
+        end
+      end else begin
+        // move while alive
+        x_pos <= dir ? x_pos - SPEED : x_pos + SPEED;
+        // off-screen kills it
+        if (x_pos >= SCREEN_W || x_pos == 0)
+          exists <= 0;
+      end
+    end
+  end
+
+  assign y_pos = Y_START;
+endmodule

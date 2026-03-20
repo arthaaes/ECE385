@@ -1,0 +1,25 @@
+module enemy_active_flags
+(
+	input  logic              rst_game,
+	input  logic [6:0]        enemy_got_hit,
+	input  logic              collision,
+	output logic [9:0][2:0]   enemy_active_flags
+);
+
+	wire [3:0] col = enemy_got_hit[6:3]; // 10 columns
+	wire [2:0] row = enemy_got_hit[2:0]; // 3 rows
+
+	integer i, j;
+
+	always_ff @ (posedge rst_game or posedge collision) begin
+		if (rst_game) begin
+			for (i = 0; i < 10; i = i + 1)
+				for (j = 0; j < 3; j = j + 1)
+					enemy_active_flags[i][j] <= 1'b1;
+		end
+		else if (collision) begin
+			enemy_active_flags[col][row] <= 1'b0;
+		end
+	end
+
+endmodule

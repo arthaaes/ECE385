@@ -1,0 +1,58 @@
+module register_1B 
+(
+    input logic Clk, Reset, Load,
+    input logic Data_in,
+    output logic Data_out
+);
+	always_ff @ (posedge Clk) begin
+		if (~Reset) // Asynchronous Reset
+        Data_out <= 1'b0;
+		else if (Load)
+        Data_out <= Data_in;
+	end
+endmodule
+
+module register_3B 
+(
+    input logic Clk, Reset, Load,
+    input logic [2:0] Data_in,
+    output logic [2:0] Data_out
+);
+	always_ff @ (posedge Clk) begin
+		if (~Reset) // Asynchronous Reset
+        Data_out <= 3'b0;
+		else if (Load)
+        Data_out <= Data_in[2:0];
+	end
+endmodule
+
+module register_12B 
+(
+    input logic Clk, Reset, Load,
+    input logic[11:0] Data_in,
+    output logic[11:0] Data_out
+);
+	always_ff @ (posedge Clk) begin
+		if (~Reset) // Asynchronous Reset
+        Data_out <= 12'b0;
+		else if (Load)
+        Data_out <= Data_in[11:0];
+	end
+endmodule
+
+module register_16B 
+(
+    input logic Clk, Reset, Load,
+    input logic [15:0] Data_in,
+    output logic [15:0] Data_out
+);
+	always_ff @ (posedge Clk) begin
+		if (~Reset) // Asynchronous Reset
+        Data_out <= 16'h0;
+		else if (Load)
+        Data_out <= Data_in[15:0];
+	end
+endmodule
+
+
+

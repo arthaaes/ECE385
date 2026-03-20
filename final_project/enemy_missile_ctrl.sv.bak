@@ -1,0 +1,104 @@
+//enemy_missile.ctrl.sv
+//
+//responsible for controlling when an enemy
+//creates a new missile and controls it's
+//movement. The enemy that is closest to the
+//left side of the player's ship is the one
+//that shoots a missile every 2 seconds
+
+module enemy_missile_ctrl
+(
+	input		logic				rst_game,
+	input		logic	[9:0]		player_pos_x,				//player left X coordinate
+	input		logic [9:0][2:0] 	enemy_active_flags,	//enemies that are still alive
+	input		logic				frame_tick,				//vsync signal
+	input		logic [9:0]		enemy_pos_y,		//offset of the enemy array
+	input		logic [3:0]		curr_state,
+	input logic [9:0]  enemy_offset_y,
+	
+	
+	output	logic				missile_active,				//whether or not the enemy missile exists
+	output 	logic	[9:0]		enemy_missile_x,			//enemy missile X position
+	output	logic	[9:0]		enemy_missile_y				//enemy missile Y position
+);
+
+	logic [7:0] missile_timer;		//counts two seconds between every missile shot
+	logic [2:0] enemy_column;
+	logic [3:0] column_index;
+	
+	always_ff @ (posedge frame_tick or posedge rst_game) begin
+
+		if(rst_game) begin
+			missile_timer = 8'd0;
+			missile_active = 1'b0;
+		end
+		
+		else if(curr_state != 4'd1) begin
+			missile_timer = 8'd0;
+			missile_active = 1'b0;
+		end
+		
+		else begin
+		
+			enemy_missile_x = enemy_missile_x;
+		
+			//wait for when we can send the next missile
+			if(missile_timer < 8'd120 && !missile_active) begin
+				missile_timer = missile_timer + 8'd1;
+			end
+			
+			//if it's time, create the missile (if we can)
+			else if(!missile_active && missile_timer >= 8'd120) begin
+			
+				//have a missile shoot out from the middle
+				//of the enemy
+				enemy_missile_x = {column_index, 6'b0} + enemy_pos_y + 10'd16;
+				missile_timer = 8'd0;
+			
+				//choose the Y position to create it from, depending
+				//on what the lowest enemy that is still alive
+				//in the nearest column of enemies.
+    // updated, spawns relative to the moving enemy block:
+    if      (enemy_column[2]) begin 
+        missile_active  = 1;
+        enemy_missile_y = enemy_offset_y + 10'd96;  // bottom row
+    end
+    else if (enemy_column[1]) begin 
+        missile_active  = 1;
+        enemy_missile_y = enemy_offset_y + 10'd64;  // middle row
+    end
+    else if (enemy_column[0]) begin 
+        missile_active  = 1;
+        enemy_missile_y = enemy_offset_y + 10'd32;  // top row
+    end
+
+
+				
+			end
+			
+			//check for collision
+			else if (enemy_missile_y >= 480) begin
+				
+				missile_active = 1'b0;
+				
+			end
+			
+			//otherwise update y position
+			else if(missile_active) begin
+				
+				enemy_missile_y = enemy_missile_y + 10'd3;
+				
+			end
+							
+		end
+		
+	end
+	
+	always_comb begin
+	
+		column_index = player_pos_x[9:6];
+		enemy_column = enemy_active_flags[column_index];
+
+	end
+
+endmodule 

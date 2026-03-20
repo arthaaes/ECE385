@@ -1,0 +1,140 @@
+// detect_collision.sv
+//
+// Responsible for detecting collisions between missiles
+// hitting either the player or an enemy. Whenever one is
+// hit, player_collision (player collision) or enemy_collision (enemy
+// collision) is set high for one clock cycle of vsync. 
+
+module detect_collision #(
+   parameter PMAX = 3           // match your player_missile_ctrl.PMAX
+ ) (
+	input logic rst_game,
+	input logic frame_tick,
+   input  logic [PMAX-1:0]        player_missile_active,    // which slots are active
+   input  logic [9:0]             player_missile_x   [PMAX],
+   input  logic [9:0]             player_missile_y   [PMAX],
+   output logic [PMAX-1:0]        pmissile_collided,  // per-slot collision flag	
+	input logic [9:0] enemy_missile_x,	//enemy missile X
+	input logic [9:0] enemy_missile_y,	//enemy missile Y
+	
+	input logic [9:0] player_pos_x,		//left X coord of player
+	
+	output	logic [6:0] enemy_got_hit,	//index of enemy that has been hit
+	
+	input logic [9:0] enemy_pos_y,	//top left x coordinate of enemy array
+	
+	input logic [9:0] enemy_offset_y,
+	
+	input	logic [9:0][2:0] 	enemy_active_flags,	//array of living enemies
+	
+	output logic player_collision,		//flag signifying player has been hit
+	output logic enemy_collision,			//flag signifying enemy has been hit
+	
+	input  logic        mystery_exists,  // from mystery_controller
+	input  logic [9:0]  mysteryX,        // mystery ship X
+	input  logic [9:0]  mysteryY,        // mystery ship Y
+	output logic        mystery_hit      // one‐cycle pulse when shot
+
+);
+
+	logic [9:0] pmissile_normalized;
+	logic [9:0] player_xmax;
+	logic [9:0] ySlice1;
+	logic [9:0] ySlice2;
+	logic [9:0] ySlice3;
+
+
+
+always_ff @(posedge frame_tick or posedge rst_game) begin
+  if (rst_game) begin
+    // — clear all one-cycle flags on reset —
+    player_collision        <= 1'b0;
+    enemy_collision        <= 1'b0;
+    pmissile_collided <= '0;
+    mystery_hit       <= 1'b0;
+  end
+  else begin
+	 logic [9:0] normX;
+	 logic [9:0] normY;
+	 
+	 pmissile_collided <= '0;
+    // — make each flag only one cycle long —
+    if (player_collision)    player_collision    <= 1'b0;
+    if (enemy_collision)    enemy_collision    <= 1'b0;
+    if (mystery_hit)   mystery_hit   <= 1'b0;
+
+    // — test each active missile slot —
+    for (int i = 0; i < PMAX; i++) begin
+      if (player_missile_active[i]) begin
+        // normalize X for this slot
+        normX = player_missile_x[i] - enemy_pos_y;
+		  normY = player_missile_y[i] - enemy_offset_y;
+
+      // — normalize Y for this slot to account for downward movement —
+      normY = player_missile_y[i] - enemy_offset_y;
+
+      // row-1 collision?  (row index = 0; pixels 0–31)
+      if (normY <  10'd32  &&
+          normX[5]   == 1'b0 &&
+          enemy_active_flags[normX[9:6]][0]) begin
+
+        enemy_got_hit            <= { normX[9:6], 3'd0 };
+        enemy_collision           <= 1'b1;
+        pmissile_collided[i] <= 1'b1;
+      end
+
+      // row-2 collision?  (row index = 1; pixels 32–63)
+      else if (normY >= 10'd32  && normY < 10'd64 &&
+               normX[5]   == 1'b0 &&
+               enemy_active_flags[normX[9:6]][1]) begin
+
+        enemy_got_hit            <= { normX[9:6], 3'd1 };
+        enemy_collision           <= 1'b1;
+        pmissile_collided[i] <= 1'b1;
+      end
+
+      // row-3 collision?  (row index = 2; pixels 64–95)
+      else if (normY >= 10'd64  && normY < 10'd96 &&
+               normX[5]   == 1'b0 &&
+               enemy_active_flags[normX[9:6]][2]) begin
+
+        enemy_got_hit            <= { normX[9:6], 3'd2 };
+        enemy_collision           <= 1'b1;
+        pmissile_collided[i] <= 1'b1;
+      end
+
+
+        // mystery‐alien collision?
+        else if (mystery_exists                   &&
+                 player_missile_x[i] >= mysteryX        &&
+                 player_missile_x[i] <  (mysteryX + 10'd64) &&
+                 player_missile_y[i] >= mysteryY        &&
+                 player_missile_y[i] <  (mysteryY + 10'd32)) begin
+
+          mystery_hit         <= 1'b1;
+          pmissile_collided[i] <= 1'b1;
+        end
+      end
+    end
+
+    // — finally: check enemy missile vs. player
+    if (enemy_missile_y >= 10'd452 &&
+        enemy_missile_y <  10'd480 &&
+        enemy_missile_x >= player_pos_x &&
+        enemy_missile_x <= player_xmax) begin
+
+      player_collision <= 1'b1;
+    end
+  end
+end
+
+	
+always_comb begin
+    player_xmax = player_pos_x + 10'd64;
+    ySlice1     = 10'd63;
+    ySlice2     = 10'd95;
+    ySlice3     = 10'd127;
+end
+
+
+endmodule 

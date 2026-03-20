@@ -1,0 +1,74 @@
+module player_control (
+  input logic rst_game,
+  input logic frame_tick,
+  input logic [7:0] kbd_input,
+  input logic player_collision,
+  input logic collected,               // <=== NEW: pulse when life drop is collected
+
+  output logic player_fire,
+  output logic flash_effect,
+  output logic [9:0] player_x,
+  output logic [2:0] player_life_count,
+  output logic invincible_flag
+);
+
+  logic [11:0] subpixel_position;
+  logic invincible;
+  logic [9:0] invincible_counter;
+
+  assign flash_effect = invincible_counter[2];
+
+  always_ff @ (posedge frame_tick or posedge rst_game) begin
+    if (rst_game) begin
+      subpixel_position[11:2] <= 10'd288;
+      player_fire         <= 1'b0;
+      player_life_count                   <= 3'd3;
+      invincible              <= 1'b0;
+      invincible_counter      <= 9'd0;
+      invincible_flag      <= 1'b0;
+    end else begin
+      logic [11:0] next_pos;
+
+      // LIFE DROP COLLECTED? INCREASE LIFE UP TO 3
+      if (collected && player_life_count < 3'd3) begin
+        player_life_count <= player_life_count + 1;
+      end
+
+      // HANDLE DAMAGE / INVINCIBILITY
+      if (player_collision && player_life_count > 3'd0 && !invincible) begin
+        player_life_count <= player_life_count - 3'd1;
+        invincible <= 1'b1;
+        invincible_counter <= 9'd0;
+        invincible_flag <= 1'b1;
+      end else if (invincible && invincible_counter <= 9'd240) begin
+        invincible_counter <= invincible_counter + 1;
+        invincible_flag <= 1'b1;
+      end else begin
+        invincible_counter <= 9'd0;
+        invincible <= 1'b0;
+        invincible_flag <= 1'b0;
+      end
+
+      // MOVEMENT
+      next_pos = subpixel_position;
+      if (kbd_input == 8'd4 && subpixel_position[11:2] > 10'd0)
+        next_pos = next_pos - 12'd6;
+      if (kbd_input == 8'd7 && subpixel_position[11:2] < 10'd576)
+        next_pos = next_pos + 12'd6;
+
+      // CLAMP
+      if (next_pos[11:2] < 10'd0)
+        next_pos[11:2] = 10'd0;
+      else if (next_pos[11:2] > 10'd576)
+        next_pos[11:2] = 10'd576;
+
+      subpixel_position <= next_pos;
+
+      // FIRE
+      player_fire <= (kbd_input == 8'd44);
+    end
+  end
+
+  assign player_x = subpixel_position[11:2];
+
+endmodule
